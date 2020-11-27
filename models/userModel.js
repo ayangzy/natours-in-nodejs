@@ -31,6 +31,7 @@ const userSchema = Schema({
       },
       message: 'password does not match',
     },
+    passwordChangedAt: Date,
   },
   photo: String,
 });
@@ -52,6 +53,18 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamps) {
+  if (this.passwordChangedAt) {
+    const changedTimestamps = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamps > changedTimestamps;
+  }
+
+  return false;
 };
 
 const User = model('User', userSchema);
