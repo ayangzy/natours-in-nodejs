@@ -1,8 +1,3 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-
-dotenv.config({ path: './config.env' });
-
 const connectDb = require('./utils/mongoConnection');
 
 const app = require('./app');

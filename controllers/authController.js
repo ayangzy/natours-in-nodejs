@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { MongooseDocument } = require('mongoose');
 const { promisify } = require('util');
 const User = require('../models/userModel');
 
@@ -94,6 +93,7 @@ exports.protect = async (req, res, next) => {
 
     //check if user still exist
     const currentUser = await User.findById(decoded.id);
+
     if (!currentUser) {
       return res.status(401).send({
         status: 'fail',
@@ -107,6 +107,8 @@ exports.protect = async (req, res, next) => {
         message: 'User recently changed password, please login again',
       });
     }
+
+    req.user = currentUser;
   } catch (error) {
     res.status(500).send({
       status: 'fail',
@@ -114,46 +116,39 @@ exports.protect = async (req, res, next) => {
     });
   }
   //Grant access to the protected route
-  
-  //req.user = currentUser;
+
   next();
 };
 
-
-exports.restrictTo = (...roles)=>{
-  return (req, res, next)=>{
-    if(!roles.includes(req.body.role)){
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.body.role)) {
       return res.status(403).send({
         status: 'fail',
-        message: 'You do not have the permission to perform this operation'
-      }) 
-    }
-    next();
-  }
-}
-
-exports.forgotPassowrd = async (req, res, next)=>{
-    try {
-      const user = await User.findOne({email: req.body.email});
-        if(!user){
-          return res.status(404).send({
-            status: 'fail',
-            'message': 'there is no user with that email address',
-          })
-        }
-        const resetToken = user.createPasswordResetToken();
-        await user.save();
-        
-    } catch (error) {
-      res.status(500).send({
-        status: 'fail',
-        message: 'something went wrong while trying to perform this operation',
+        message: 'You do not have the permission to perform this operation',
       });
     }
-    
-}
+    next();
+  };
+};
 
-exports.resetPassword = async ( req, res, next)=>{
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).send({
+        status: 'fail',
+        message: 'there is no user with that email address',
+      });
+    }
+    const resetToken = user.createPasswordResetToken();
+    await user.save();
+  } catch (error) {
+    res.status(500).send({
+      status: 'fail',
+      message: 'something went wrong while trying to perform this operation',
+    });
+  }
+};
 
-}
-
+exports.resetPassword = async (req, res, next) => {};

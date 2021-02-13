@@ -1,10 +1,13 @@
 const express = require('express');
 const morgan = require('morgan');
+const dotenv = require('dotenv');
 
-const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
+const tourRoutes = require('./routes/tourRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
+
+dotenv.config({ path: './config.env' });
 
 app.use(express.json());
 
@@ -19,7 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
+app.use('/api/v1/tours', tourRoutes);
+app.use('/api/v1/users', userRoutes);
 
 module.exports = app;
