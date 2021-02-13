@@ -23,7 +23,7 @@ exports.getAllTours = async (req, res) => {
       status: 'success',
       result: tours.length,
       data: {
-        tours: tours,
+        tours,
       },
     });
   } catch (error) {
