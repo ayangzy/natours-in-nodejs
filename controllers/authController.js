@@ -132,3 +132,28 @@ exports.restrictTo = (...roles)=>{
   }
 }
 
+exports.forgotPassowrd = async (req, res, next)=>{
+    try {
+      const user = await User.findOne({email: req.body.email});
+        if(!user){
+          return res.status(404).send({
+            status: 'fail',
+            'message': 'there is no user with that email address',
+          })
+        }
+        const resetToken = user.createPasswordResetToken();
+        await user.save();
+        
+    } catch (error) {
+      res.status(500).send({
+        status: 'fail',
+        message: 'something went wrong while trying to perform this operation',
+      });
+    }
+    
+}
+
+exports.resetPassword = async ( req, res, next)=>{
+
+}
+
