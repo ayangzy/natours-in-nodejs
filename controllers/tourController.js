@@ -23,7 +23,7 @@ exports.getAllTours = async (req, res) => {
       status: 'success',
       result: tours.length,
       data: {
-        tours: tours,
+        tours,
       },
     });
   } catch (error) {
@@ -35,7 +35,6 @@ exports.getAllTours = async (req, res) => {
 };
 
 exports.createNewTour = async (req, res) => {
-  
   try {
     const newTour = await Tour.create(req.body);
     res.status(201).send({
@@ -103,8 +102,6 @@ exports.updateTour = async (req, res) => {
     });
   }
 };
-
-
 
 exports.deleteTour = async (req, res) => {
   try {
