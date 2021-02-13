@@ -35,6 +35,7 @@ exports.getAllTours = async (req, res) => {
 };
 
 exports.createNewTour = async (req, res) => {
+  
   try {
     const newTour = await Tour.create(req.body);
     res.status(201).send({
@@ -66,12 +67,7 @@ exports.getTour = async (req, res) => {
   try {
     const tourId = req.params.id;
     const tour = await Tour.findById(tourId);
-    if (!tour) {
-      return res.status(404).send({
-        status: 'fail',
-        message: 'You are not authorized to view this tour',
-      });
-    }
+
     res.status(200).send({
       status: 'success',
       message: 'Data successfully retrieved',
@@ -107,6 +103,8 @@ exports.updateTour = async (req, res) => {
     });
   }
 };
+
+
 
 exports.deleteTour = async (req, res) => {
   try {

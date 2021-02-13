@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { MongooseDocument } = require('mongoose');
 const { promisify } = require('util');
 const User = require('../models/userModel');
 
@@ -112,7 +113,22 @@ exports.protect = async (req, res, next) => {
       message: error,
     });
   }
-  //Grand access to the protected route
+  //Grant access to the protected route
+  
   //req.user = currentUser;
   next();
 };
+
+
+exports.restrictTo = (...roles)=>{
+  return (req, res, next)=>{
+    if(!roles.includes(req.body.role)){
+      return res.status(403).send({
+        status: 'fail',
+        message: 'You do not have the permission to perform this operation'
+      }) 
+    }
+    next();
+  }
+}
+
