@@ -17,10 +17,10 @@ const userSchema = Schema({
     validate: [validator.isEmail, 'Provide a valid email address'],
   },
 
-  role:{
+  role: {
     type: String,
     enum: ['user', 'guide', 'lead-guide', 'admin'],
-    default: 'user'
+    default: 'user',
   },
   password: {
     type: String,
@@ -37,13 +37,12 @@ const userSchema = Schema({
         return el === this.password;
       },
       message: 'password does not match',
-    }
+    },
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires : Date,
+  passwordResetExpires: Date,
   photo: String,
-  
 });
 
 userSchema.pre('save', async function (next) {
@@ -77,14 +76,15 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamps) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken =  function(){
+userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
 
-  this.passwordResetToken = crypto.createHash('shal256').update(resetToken).digest('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
-  console.log({resetToken});
 
   return resetToken;
 };
