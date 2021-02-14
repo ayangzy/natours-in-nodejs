@@ -9,6 +9,18 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).send({
+    status: 'success',
+    message: 'successfully created',
+    token,
+    data: {
+      user: user,
+    },
+  });
+};
 exports.signUp = async (req, res, next) => {
   try {
     const newUser = await User.create({
@@ -17,22 +29,7 @@ exports.signUp = async (req, res, next) => {
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
     });
-    const token = signToken(newUser._id);
-
-    if (!newUser) {
-      return res.status(400).send({
-        status: 'fail',
-        message: 'Bad request',
-      });
-    }
-    res.status(201).send({
-      status: 'success',
-      message: 'successfully created',
-      token,
-      data: {
-        user: newUser,
-      },
-    });
+    createSendToken(newUser, 201, res);
   } catch (error) {
     res.status(500).send({
       status: 'fail',
@@ -61,16 +58,7 @@ exports.login = async (req, res, next) => {
     });
   }
 
-  const token = signToken(user._id);
-  return res.status(200).send({
-    status: 'success',
-    message: 'successfully logged in',
-    token,
-    data: {
-      name: user.name,
-      email: user.email,
-    },
-  });
+  createSendToken(user, 200, res);
 };
 
 exports.protect = async (req, res, next) => {
@@ -193,18 +181,36 @@ exports.resetPassword = async (req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save();
 
-    const token = signToken(user._id);
-
-    res.status(200).send({
-      status: 'success',
-      message: 'You have successfully reset your password',
-      token,
-    });
+    createSendToken(user, 200, res);
   } catch (error) {
     return res.status(500).status({
       status: 'fail',
       message:
         'An error occur while trying to perform action, please try again',
+    });
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('+password');
+    if (
+      !(await user.correctPassword(req.body.passwordCurrent, user.password))
+    ) {
+      return res.status(401).send({
+        status: 'fails',
+        message: 'Your current password is wrong',
+      });
+    }
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+
+    createSendToken(user, 200, res);
+  } catch (error) {
+    return res.status(400).send({
+      status: 'fail',
+      message: 'Bad request',
     });
   }
 };
