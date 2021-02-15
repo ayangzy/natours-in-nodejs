@@ -32,6 +32,7 @@
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-handlebars": "^5.1.0",
+    "express-mongo-sanitize": "^2.0.2",
     "express-rate-limit": "^5.2.5",
     "express-session": "^1.17.1",
     "express-validator": "^6.6.1",
@@ -47,6 +48,7 @@
     "pug": "^3.0.0",
     "sequelize": "^6.3.4",
     "slugify": "^1.4.6",
-    "validator": "^13.1.17"
+    "validator": "^13.1.17",
+    "xss-clean": "^0.1.1"
   }
 }
