@@ -42,3 +42,19 @@ exports.updateMe = async (req, res, next) => {
     user: updatedUser,
   });
 };
+
+exports.deleteMe = async (req, res, next) => {
+  try {
+    await User.findByIdAndUpdate(req.user.id, { active: false });
+    return res.status(204).send({
+      status: 'success',
+      message: 'successfully deactivated your account',
+      data: null,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      status: 'error',
+      message: error,
+    });
+  }
+};
