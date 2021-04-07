@@ -51,7 +51,7 @@ const tourSchema = mongoose.Schema(
           //this only points to current doc on NEW document creation.
           return val < this.price;
         },
-        message: 'Discount price should be below regurlar price',
+        message: 'Discount price should be below regular price',
       },
     },
     summary: {
@@ -79,7 +79,32 @@ const tourSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
   },
+
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
