@@ -29,7 +29,7 @@ exports.getAllTours = async (req, res) => {
   } catch (error) {
     res.status(400).send({
       status: 'failed',
-      message: error,
+      message: 'bad request',
     });
   }
 };
@@ -67,11 +67,18 @@ exports.getTour = async (req, res) => {
     const tourId = req.params.id;
     const tour = await Tour.findById(tourId);
 
-    res.status(200).send({
+    // if (!tour) {
+    //   return res.status(404).send({
+    //     status: 'fail',
+    //     message: 'The tour with the specified Id does not exist',
+    //   });
+    // }
+
+    return res.status(200).send({
       status: 'success',
       message: 'Data successfully retrieved',
       data: {
-        tour: tour,
+        tour,
       },
     });
   } catch (error) {

@@ -1,3 +1,4 @@
+//const { Mongoose } = require('mongoose');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 // const validator = require('validator');
@@ -103,6 +104,13 @@ const tourSchema = mongoose.Schema(
         day: Number,
       },
     ],
+
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
 
   {
@@ -127,6 +135,11 @@ tourSchema.pre('save', function (next) {
 // });
 
 //QUERY MIDDLEWARE
+tourSchema.pre(/^find/, function (next) {
+  this.populate('guides');
+  next();
+});
+
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   next();
